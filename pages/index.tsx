@@ -76,7 +76,7 @@ const Home: NextPage = () => {
       id: contact.id,
     };
 
-    const { success }: any = await mutateDeleteContact(requests);
+    await mutateDeleteContact(requests);
 
     refetch();
 
@@ -125,8 +125,8 @@ const Home: NextPage = () => {
                     <Td>{favContact?.first_name}</Td>
                     <Td>{favContact?.last_name}</Td>
                     <Td>
-                      {favContact?.phones?.map((phone: Phones) => (
-                        <Text>{phone.number}</Text>
+                      {favContact?.phones?.map((phone: Phones, i: number) => (
+                        <Text key={i}>{phone.number}</Text>
                       ))}
                     </Td>
                     <Td>
@@ -150,6 +150,7 @@ const Home: NextPage = () => {
                           rightIcon={<DeleteIcon color="red" />}
                           colorScheme="red"
                           variant="outline"
+                          onClick={() => onHandleDelete(favContact)}
                         >
                           Delete
                         </Button>
@@ -166,15 +167,16 @@ const Home: NextPage = () => {
                     </Td>
                   </Tr>
                 )}
-                {data?.contact?.map((item: ContactList) => {
-                  if (item.id !== favContact?.id) {
+                {data?.contact
+                  ?.filter((item: ContactList) => item.id !== favContact?.id)
+                  .map((item: ContactList) => {
                     return (
                       <Tr key={item.id}>
                         <Td>{item.first_name}</Td>
                         <Td>{item.last_name}</Td>
                         <Td>
-                          {item.phones?.map((phone: Phones) => (
-                            <Text>{phone.number}</Text>
+                          {item.phones?.map((phone: Phones, i: number) => (
+                            <Text key={i}>{phone.number}</Text>
                           ))}
                         </Td>
                         <Td>
@@ -215,10 +217,7 @@ const Home: NextPage = () => {
                         </Td>
                       </Tr>
                     );
-                  } else {
-                    return <></>;
-                  }
-                })}
+                  })}
               </Tbody>
             </Table>
           </TableContainer>
