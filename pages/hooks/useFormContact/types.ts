@@ -29,4 +29,5 @@ export type MutationInput = {
 
 export type MutationOutput = {
   insert_contact?: FormContact[];
+  refetch?: () => void;
 };

@@ -13,6 +13,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import styles from "../styles/Home.module.css";
 import type { NextPage } from "next";
@@ -23,38 +24,68 @@ import { AddIcon, DeleteIcon, EditIcon, StarIcon } from "@chakra-ui/icons";
 import FormContact from "./components/formContact";
 import { ContactList, Phones } from "./hooks/useGetContactList/types";
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useDeleteContact from "./hooks/useDeleteContact";
 
 const Home: NextPage = () => {
+  const toast = useToast();
+  const isServerRendered = typeof window !== "undefined";
   moment.locale();
   const isMobile = isMobileHandler();
+
+  const [mutateDeleteContact] = useDeleteContact();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [activeContact, setActiveContact] = useState<ContactList>();
-  const [favContact, setFavContact] = useState<ContactList>();
+  const [favContact, setFavContact] = useState<ContactList | null>(null);
 
   const variables = {
     limit: 10,
     offset: 1,
   };
 
-  const { data } = useGetContactList(variables);
+  useEffect(() => {
+    if (isServerRendered)
+      setFavContact(JSON.parse(localStorage.getItem("favorite") || "null"));
+  }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [isOpen]);
+
+  const { data, refetch } = useGetContactList(variables);
 
   const onHandleEdit = (contact: ContactList | undefined) => {
     setActiveContact(contact);
     onOpen();
   };
 
-  const onHandleFav = (
-    contact: ContactList | undefined,
-    isUnfavorite: boolean
-  ) => {
+  const onHandleFav = (contact: ContactList, isUnfavorite: boolean) => {
     if (isUnfavorite) {
-      setFavContact(undefined);
+      setFavContact(null);
+      localStorage.removeItem("favorite");
     } else {
       setFavContact(contact);
+      localStorage.setItem("favorite", JSON.stringify(contact));
     }
+  };
+
+  const onHandleDelete = async (contact: ContactList) => {
+    const requests = {
+      id: contact.id,
+    };
+
+    const { success }: any = await mutateDeleteContact(requests);
+
+    refetch();
+
+    toast({
+      title: `Delete Contact Success`,
+      status: "success",
+      position: "top",
+      isClosable: true,
+    });
   };
 
   return (
@@ -90,7 +121,7 @@ const Home: NextPage = () => {
               </Thead>
               <Tbody>
                 {favContact && (
-                  <Tr backgroundColor="yellow.200">
+                  <Tr backgroundColor="yellow.100">
                     <Td>{favContact?.first_name}</Td>
                     <Td>{favContact?.last_name}</Td>
                     <Td>
@@ -99,7 +130,9 @@ const Home: NextPage = () => {
                       ))}
                     </Td>
                     <Td>
-                      {moment(favContact?.created_at).format("D MMMM YYYY")}
+                      {moment(favContact?.created_at).format(
+                        "D MMMM YYYY, hh:mm:ss"
+                      )}
                     </Td>
                     <Td>
                       <Flex justifyContent="flex-start" alignItems="center">
@@ -143,7 +176,11 @@ const Home: NextPage = () => {
                           <Text>{phone.number}</Text>
                         ))}
                       </Td>
-                      <Td>{moment(item.created_at).format("D MMMM YYYY")}</Td>
+                      <Td>
+                        {moment(item.created_at).format(
+                          "D MMMM YYYY, hh:mm:ss"
+                        )}
+                      </Td>
                       <Td>
                         <Flex justifyContent="flex-start" alignItems="center">
                           <Button
@@ -156,6 +193,7 @@ const Home: NextPage = () => {
                             Edit
                           </Button>
                           <Button
+                            onClick={() => onHandleDelete(item)}
                             m={1}
                             rightIcon={<DeleteIcon color="red" />}
                             colorScheme="red"

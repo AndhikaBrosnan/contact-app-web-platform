@@ -11,25 +11,22 @@ type Scalars = {
   JSON: any;
 };
 
+type FormContact = {
+  id: Scalars["ID"];
+  name: Maybe<Scalars["String"]>;
+};
+
 export type Phones = {
   number: Scalars["String"];
 };
 
-export type ContactList = {
-  __typename?: "ContactList";
-  id: Scalars["ID"];
+export type MutationInput = {
   first_name: Maybe<Scalars["String"]>;
   last_name: Maybe<Scalars["String"]>;
   created_at: Maybe<Scalars["DateTime"]>;
   phones: Maybe<Phones[]>;
 };
 
-export interface QueryInput {
-  limit?: number;
-  offset?: number;
-}
-
-export type QueryOutput = {
-  contact?: ContactList[];
-  refetch?: () => void;
+export type MutationOutput = {
+  insert_contact?: FormContact[];
 };

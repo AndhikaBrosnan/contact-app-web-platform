@@ -11,6 +11,7 @@ const useGetContactList = (variables: QueryInput) => {
       success: false,
       message: "Bad Request",
       data: { contact: [] },
+      refetch: () => {},
     };
   }
 

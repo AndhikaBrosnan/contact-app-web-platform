@@ -1,4 +1,4 @@
-import { useMutation, MUTATION } from "./formContact.graphql";
+import { useMutation, MUTATION } from "./deleteContact.graphql";
 import { MutationInput, MutationOutput } from "./types";
 
 type RequestValue = {
@@ -11,23 +11,25 @@ const config = (req: any) => {
   return { variables: req };
 };
 
-const useFormContact = () => {
-  const [doMutate] = useMutation<MutationOutput>(MUTATION);
+const useDeleteContact = () => {
+  const [doMutate, { error }] = useMutation<MutationOutput, MutationOutput>(
+    MUTATION
+  );
 
-  const mutateFormContact = async (req: any) => {
+  const mutateDeleteContact = async (req: any) => {
     try {
       const res = await doMutate(config(req));
+      console.log("res delete: ", res);
       return res;
     } catch (err: any) {
       return {
         success: false,
         message: "Bad Requests",
-        refetch: () => {},
       };
     }
   };
 
-  return [mutateFormContact];
+  return [mutateDeleteContact];
 };
 
-export default useFormContact;
+export default useDeleteContact;
