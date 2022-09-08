@@ -16,8 +16,8 @@ import { useEffect, useState } from "react";
 import { isMobileHandler } from "../../../helpers/utils";
 import CreatableSelect from "react-select/creatable";
 import type { NextPage } from "next";
-import { ContactList } from "../../hooks/useGetContactList/types";
-import useFormContact from "../../hooks/useFormContact";
+import { ContactList } from "../../../hooks/useGetContactList/types";
+import useFormContact from "../../../hooks/useFormContact";
 
 type ContactState = {
   first_name: string;

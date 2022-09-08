@@ -18,14 +18,14 @@ import {
 import styles from "../styles/Home.module.css";
 import type { NextPage } from "next";
 import Head from "next/head";
-import useGetContactList from "./hooks/useGetContactList";
+import useGetContactList from "../hooks/useGetContactList";
 import { isMobileHandler } from "../helpers/utils";
 import { AddIcon, DeleteIcon, EditIcon, StarIcon } from "@chakra-ui/icons";
 import FormContact from "./components/formContact";
-import { ContactList, Phones } from "./hooks/useGetContactList/types";
+import { ContactList, Phones } from "../hooks/useGetContactList/types";
 import moment from "moment";
 import { useEffect, useState } from "react";
-import useDeleteContact from "./hooks/useDeleteContact";
+import useDeleteContact from "../hooks/useDeleteContact";
 
 const Home: NextPage = () => {
   const toast = useToast();
