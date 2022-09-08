@@ -4,6 +4,10 @@ import {
   Flex,
   Heading,
   IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Spacer,
   Table,
   TableContainer,
   Tbody,
@@ -20,7 +24,13 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import useGetContactList from "../hooks/useGetContactList";
 import { isMobileHandler } from "../helpers/utils";
-import { AddIcon, DeleteIcon, EditIcon, StarIcon } from "@chakra-ui/icons";
+import {
+  AddIcon,
+  DeleteIcon,
+  EditIcon,
+  Search2Icon,
+  StarIcon,
+} from "@chakra-ui/icons";
 import FormContact from "./components/formContact";
 import { ContactList, Phones } from "../hooks/useGetContactList/types";
 import moment from "moment";
@@ -39,11 +49,14 @@ const Home: NextPage = () => {
 
   const [activeContact, setActiveContact] = useState<ContactList>();
   const [favContact, setFavContact] = useState<ContactList | null>(null);
+  const [offset, setOffset] = useState<number>(0);
+  const [renderedData, setRenderedData] = useState<any>();
 
   const variables = {
     limit: 10,
-    offset: 1,
+    offset: offset,
   };
+  const { data, refetch } = useGetContactList(variables);
 
   useEffect(() => {
     if (isServerRendered)
@@ -54,7 +67,9 @@ const Home: NextPage = () => {
     refetch();
   }, [isOpen]);
 
-  const { data, refetch } = useGetContactList(variables);
+  useEffect(() => {
+    setRenderedData(data?.contact);
+  }, [data]);
 
   const onHandleEdit = (contact: ContactList | undefined) => {
     setActiveContact(contact);
@@ -88,6 +103,23 @@ const Home: NextPage = () => {
     });
   };
 
+  const onHandlePage = (numb: number) => {
+    setOffset(numb);
+
+    refetch();
+  };
+
+  const onHandleSearch = (searchVal: string) => {
+    if (searchVal === "") {
+      setRenderedData(data?.contact);
+      return;
+    }
+    const filterBySearch = renderedData.filter((item: any) =>
+      item.first_name.concat(item.last_name).includes(searchVal)
+    );
+    setRenderedData(filterBySearch);
+  };
+
   return (
     <div>
       <Head>
@@ -97,15 +129,29 @@ const Home: NextPage = () => {
       </Head>
 
       <Box>
-        <Heading
-          as="h1"
-          size="lg"
+        <Flex
+          justifyContent="space-between"
+          textAlign="center"
           p={3}
           backgroundColor="#034521"
-          color="white"
         >
-          Contact List
-        </Heading>
+          <Heading as="h1" size="lg" color="white">
+            Contact List
+          </Heading>
+          <Spacer />
+          <InputGroup w="20%">
+            <Input
+              type="tel"
+              placeholder="Search by Name"
+              color="white"
+              onChange={(e) => onHandleSearch(e.target.value)}
+            />
+            <InputRightElement
+              pointerEvents="none"
+              children={<Search2Icon color="gray.300" />}
+            />
+          </InputGroup>
+        </Flex>
 
         <Box mt={2} p={isMobile ? 1 : 5}>
           <TableContainer>
@@ -167,7 +213,7 @@ const Home: NextPage = () => {
                     </Td>
                   </Tr>
                 )}
-                {data?.contact
+                {renderedData
                   ?.filter((item: ContactList) => item.id !== favContact?.id)
                   .map((item: ContactList) => {
                     return (
@@ -233,6 +279,28 @@ const Home: NextPage = () => {
             icon={<AddIcon />}
           />
         </Box>
+        <Flex
+          m={1}
+          alignContent="center"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Text textAlign="center" alignItems="center">
+            Page:{" "}
+          </Text>
+          {[0, 1, 2].map((item: number) => (
+            <Button
+              onClick={() => onHandlePage(item)}
+              m={1}
+              colorScheme="teal"
+              variant="ghost"
+              key={item}
+              borderRadius="28px"
+            >
+              {item + 1}
+            </Button>
+          ))}
+        </Flex>
       </Box>
       <FormContact
         isOpen={isOpen}
