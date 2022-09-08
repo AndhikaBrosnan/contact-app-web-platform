@@ -167,53 +167,57 @@ const Home: NextPage = () => {
                   </Tr>
                 )}
                 {data?.contact?.map((item: ContactList) => {
-                  return (
-                    <Tr key={item.id}>
-                      <Td>{item.first_name}</Td>
-                      <Td>{item.last_name}</Td>
-                      <Td>
-                        {item.phones?.map((phone: Phones) => (
-                          <Text>{phone.number}</Text>
-                        ))}
-                      </Td>
-                      <Td>
-                        {moment(item.created_at).format(
-                          "D MMMM YYYY, hh:mm:ss"
-                        )}
-                      </Td>
-                      <Td>
-                        <Flex justifyContent="flex-start" alignItems="center">
-                          <Button
-                            onClick={() => onHandleEdit(item)}
-                            m={1}
-                            rightIcon={<EditIcon />}
-                            colorScheme="teal"
-                            variant="outline"
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            onClick={() => onHandleDelete(item)}
-                            m={1}
-                            rightIcon={<DeleteIcon color="red" />}
-                            colorScheme="red"
-                            variant="outline"
-                          >
-                            Delete
-                          </Button>
-                          <Button
-                            m={1}
-                            rightIcon={<StarIcon color="yellow" />}
-                            colorScheme="yellow"
-                            variant="outline"
-                            onClick={() => onHandleFav(item, false)}
-                          >
-                            Favorite
-                          </Button>
-                        </Flex>
-                      </Td>
-                    </Tr>
-                  );
+                  if (item.id !== favContact?.id) {
+                    return (
+                      <Tr key={item.id}>
+                        <Td>{item.first_name}</Td>
+                        <Td>{item.last_name}</Td>
+                        <Td>
+                          {item.phones?.map((phone: Phones) => (
+                            <Text>{phone.number}</Text>
+                          ))}
+                        </Td>
+                        <Td>
+                          {moment(item.created_at).format(
+                            "D MMMM YYYY, hh:mm:ss"
+                          )}
+                        </Td>
+                        <Td>
+                          <Flex justifyContent="flex-start" alignItems="center">
+                            <Button
+                              onClick={() => onHandleEdit(item)}
+                              m={1}
+                              rightIcon={<EditIcon />}
+                              colorScheme="teal"
+                              variant="outline"
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              onClick={() => onHandleDelete(item)}
+                              m={1}
+                              rightIcon={<DeleteIcon color="red" />}
+                              colorScheme="red"
+                              variant="outline"
+                            >
+                              Delete
+                            </Button>
+                            <Button
+                              m={1}
+                              rightIcon={<StarIcon color="yellow" />}
+                              colorScheme="yellow"
+                              variant="outline"
+                              onClick={() => onHandleFav(item, false)}
+                            >
+                              Favorite
+                            </Button>
+                          </Flex>
+                        </Td>
+                      </Tr>
+                    );
+                  } else {
+                    return <></>;
+                  }
                 })}
               </Tbody>
             </Table>
