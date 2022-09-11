@@ -8,6 +8,12 @@
 - `npm install`
 - `npm run dev`/ `yarn dev`
 
+## Tech Stack
+
+- Nextjs
+- Apollo Graphql
+- Enzyme
+
 ## How to Use
 
 - You can see the contact list on the home page

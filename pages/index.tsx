@@ -121,7 +121,7 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div>
+    <div data-test="component-contactlist">
       <Head>
         <title>Contact App</title>
         <meta name="description" content="Contact list" />

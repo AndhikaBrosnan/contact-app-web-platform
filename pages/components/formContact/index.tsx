@@ -97,7 +97,12 @@ const FormContact: any = ({ isOpen, onClose, activeContact }: any) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={isMobile ? "full" : "xl"}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size={isMobile ? "full" : "xl"}
+      data-test="component-formcontact"
+    >
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add Contact</ModalHeader>
